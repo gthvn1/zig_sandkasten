@@ -4,5 +4,7 @@ const wasmBuffer = fs.readFileSync('./fibo-web.wasm');
 WebAssembly
 	.instantiate(wasmBuffer)
 	.then(wasmModule => {
-		console.log(wasmModule.instance.exports.fibo(5));
+		for (let i = 0; i < 50; i++) {
+			console.log("fibo(" + i + ") = " + wasmModule.instance.exports.fibo(i));
+		}
 	});

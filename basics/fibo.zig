@@ -1,10 +1,28 @@
 const std = @import("std");
 
-fn fibo(a: i32) i32 {
-    if (a <= 1) {
-        return 1;
+fn fibo(x: i32) i32 {
+    if (x <= 1) {
+        return x;
     }
-    return fibo(a - 1) + fibo(a - 2);
+
+    // It overflows at 47
+    if (x >= 47) {
+        return 0;
+    }
+
+    var a: i32 = 0; // f0
+    var b: i32 = 1; // f1
+    var i: i32 = 1; // index
+
+    while (x > i) {
+        var temp = a;
+
+        a = b;
+        b += temp;
+        i += 1;
+    }
+
+    return b;
 }
 
 pub fn main() void {
