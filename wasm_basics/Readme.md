@@ -1,6 +1,11 @@
-## First try
+## Wasm Basics
 
-Let's play with zig
+Let's play with zig and wasm. Try to build a wasm file and also use it in a standalone application.
+
+## Zig standalone
+
+- Build using: `zig build-exe app.zig`
+- And run it: `./app`
 
 ## Zig to wasm
 

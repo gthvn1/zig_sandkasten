@@ -1,4 +1,4 @@
-export fn fibo(x: u32) u32 {
+pub export fn fibo(x: u32) u32 {
     if (x <= 1) {
         return x;
     }
@@ -13,7 +13,7 @@ export fn fibo(x: u32) u32 {
     var i: u32 = 1; // index
 
     while (x > i) {
-        var temp = a;
+        const temp = a;
 
         a = b;
         b += temp;
