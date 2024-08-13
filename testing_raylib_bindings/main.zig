@@ -29,10 +29,13 @@ pub fn main() !void {
     rl.set_target_fps(60);
 
     while (!rl.window_should_close()) {
+        // NOTE: deferring end drawing allows to continue when paused so even
+        // when paused the begin/end drawing is done. It looks like it
+        // important to always have these two functions called.
         rl.begin_drawing();
         defer rl.end_drawing();
 
-        // Update
+        // Check if we want to pause the game
         if (rl.is_space_pressed()) {
             std.debug.print("SPACE pressed... ", .{});
             paused = !paused;
@@ -43,6 +46,7 @@ pub fn main() !void {
             continue;
         }
 
+        // Update Game state
         const dt: f32 = rl.get_frame_time();
         velocity += gravity; // velocity increases by acceleration due to gravity
         ball_pos += velocity * Vector2{ dt, dt };
@@ -57,6 +61,7 @@ pub fn main() !void {
             // We hit the left or right so inverse x velocity
             velocity *= Vector2{ -0.9, 1 };
         }
+
         const debug_slice: [:0]u8 = try std.fmt.bufPrintZ(&debug_buffer, "dt: {d:0<.2} ms\nvelocity: {d:0<.0}\nball_pos: {d:0<.0}", .{ dt, velocity, ball_pos });
 
         // Draw
