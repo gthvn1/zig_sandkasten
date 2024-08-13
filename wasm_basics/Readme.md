@@ -9,9 +9,44 @@ Let's play with zig and wasm. Try to build a wasm file and also use it in a stan
 
 ## Zig to wasm
 
-To generate wasm file:
-- `zig build-lib fibo-web.zig -target wasm32-freestanding -dynamic`
-Note: without dynamic it generates a ".a" file.
+- Generate the wasm file: `zig build-exe  -target wasm32-freestanding -O ReleaseSmall -fno-entry -rdynamic fibo.zig`
 
-To run it you can use the index.js
-- `node index.js`
+- And run it: `node index.js`
+
+## Add a Makefile
+
+- What is interesting here is that both application are using the same library `fibo.zig`...
+```
+❯ make all
+zig build-exe app.zig
+zig build-exe \
+        -target wasm32-freestanding \
+        -O ReleaseSmall \
+        -fno-entry \
+        -rdynamic \
+        fibo.zig
+
+❯ ./app
+fibo(0) == 0
+fibo(1) == 1
+fibo(2) == 1
+fibo(3) == 2
+fibo(4) == 3
+fibo(5) == 5
+fibo(6) == 8
+fibo(7) == 13
+fibo(8) == 21
+fibo(9) == 34
+
+❯ node ./index.js
+fibo(0) = 0
+fibo(1) = 1
+fibo(2) = 1
+fibo(3) = 2
+fibo(4) = 3
+fibo(5) = 5
+fibo(6) = 8
+fibo(7) = 13
+fibo(8) = 21
+fibo(9) = 34
+```
