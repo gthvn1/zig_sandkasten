@@ -1,1 +1,2 @@
-- Just untar [raylib](https://github.com/raysan5/raylib/releases/tag/5.0).
+- Untar the archive downloaded from [raylib](https://github.com/raysan5/raylib/releases/tag/5.0).
+- And then do: `zig build && ./zig-out/bin/main`
