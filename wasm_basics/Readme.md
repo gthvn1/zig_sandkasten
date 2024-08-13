@@ -1,6 +1,7 @@
-## Wasm Basics
+# Wasm Basics
 
-Let's play with zig and wasm. Try to build a wasm file and also use it in a standalone application.
+Let's play with [Zig](https://ziglang.org/) (version 0.13.0) and [Wasm](https://webassembly.org/). 
+- Try to build a wasm file and also use it in a standalone application.
 
 ## Zig standalone
 
@@ -10,7 +11,6 @@ Let's play with zig and wasm. Try to build a wasm file and also use it in a stan
 ## Zig to wasm
 
 - Generate the wasm file: `zig build-exe  -target wasm32-freestanding -O ReleaseSmall -fno-entry -rdynamic fibo.zig`
-
 - And run it: `node index.js`
 
 ## Add a Makefile
