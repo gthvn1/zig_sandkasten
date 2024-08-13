@@ -1,2 +1,3 @@
 - Untar the archive downloaded from [raylib](https://github.com/raysan5/raylib/releases/tag/5.0).
+- If you are not using the linux amd64 archive you will need to modify the `build.zig`.
 - And then do: `zig build && ./zig-out/bin/main`
