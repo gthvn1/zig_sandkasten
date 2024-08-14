@@ -1,52 +1,23 @@
-# Wasm Basics
+# What we want to achieve...
 
-Let's play with [Zig](https://ziglang.org/) (version 0.13.0) and [Wasm](https://webassembly.org/). 
-- Try to build a wasm file and also use it in a standalone application.
+- We want to provide a set of functions that can be used from web and also from standalone application.
+- Let's start by providing a fibonacci function.
 
-## Zig standalone
+# Steps
 
-- Build using: `zig build-exe app.zig`
-- And run it: `./app`
+- [x] the first step is to have it working as a standalone application
+- [x] then try to run into into web
+- [x] and adds imports functions as well...
 
-## Zig to wasm
+# Conclusion
 
-- Generate the wasm file: `zig build-exe  -target wasm32-freestanding -O ReleaseSmall -fno-entry -rdynamic fibo.zig`
-- And run it: `node index.js`
+- We have:
+    - `fibo.zig`: is the naive implementation of fibonacci sequence in Zig
+    - This file can be compiled as an object file and called from either:
+        - `app_fibo.zig`: a standalone application in Zig
+        - `node_fibo.js`: that loads the `fibo.wasm` file generated from the same `fibo.zig` code.
 
-## Add a Makefile
+- You can test is by running `make all`
+    - then run the standalone app: `./app_fibo`
+    - or run the web app `node node_fibo.js`
 
-- What is interesting here is that both application are using the same library `fibo.zig`...
-```
-❯ make all
-zig build-exe app.zig
-zig build-exe \
-        -target wasm32-freestanding \
-        -O ReleaseSmall \
-        -fno-entry \
-        -rdynamic \
-        fibo.zig
-
-❯ ./app
-fibo(0) == 0
-fibo(1) == 1
-fibo(2) == 1
-fibo(3) == 2
-fibo(4) == 3
-fibo(5) == 5
-fibo(6) == 8
-fibo(7) == 13
-fibo(8) == 21
-fibo(9) == 34
-
-❯ node ./index.js
-fibo(0) = 0
-fibo(1) = 1
-fibo(2) = 1
-fibo(3) = 2
-fibo(4) = 3
-fibo(5) = 5
-fibo(6) = 8
-fibo(7) = 13
-fibo(8) = 21
-fibo(9) = 34
-```

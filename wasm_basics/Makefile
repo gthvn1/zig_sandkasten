@@ -1,17 +1,20 @@
-.PHONY: all clean
+.PHONY: all clean run
 
-all: app fibo.wasm
+all: app_fibo fibo.wasm
 
-app: app.zig
-	zig build-exe app.zig
+app_fibo: app_fibo.zig
+	zig build-exe app_fibo.zig
 
 fibo.wasm: fibo.zig
 	zig build-exe \
 		-target wasm32-freestanding \
-		-O ReleaseSmall \
-		-fno-entry \
-		-rdynamic \
+		-fno-entry --export=fibo \
+		-O ReleaseFast \
 		fibo.zig
 
+run: app_fibo
+	./app_fibo
+	node ./web_fibo.js
+
 clean:
-	rm -f app fibo.wasm *.o
+	rm -f *.o app_fibo fibo.wasm
