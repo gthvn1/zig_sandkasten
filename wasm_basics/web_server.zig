@@ -1,16 +1,5 @@
 const std = @import("std");
-
-const not_implemented_body =
-    \\<!DOCTYPE html>
-    \\<html lang="en">
-    \\<head><title>501: not implemented</title></head>
-    \\<body>
-    \\<p>
-    \\Server implementation is a work in progress... come back later.
-    \\</p>
-    \\</body>
-    \\</html>
-;
+const html_errors = @import("web_pages/html_errors.zig");
 
 pub fn main() !void {
     const listen_addr = try std.net.Address.parseIp4("0.0.0.0", 8000);
@@ -40,7 +29,7 @@ pub fn main() !void {
             std.debug.print("path: {s}\n", .{req.head.target});
 
             // Answer not implemented for now
-            try req.respond(not_implemented_body, .{
+            try req.respond(html_errors.not_implemented, .{
                 .status = std.http.Status.not_implemented,
             });
         } else |err| {
