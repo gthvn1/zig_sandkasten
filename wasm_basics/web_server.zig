@@ -33,7 +33,7 @@ pub fn main() !void {
         // of crashing we catch the error. It will reset the connection but we will
         // be able to serve another connection.
         if (server.receiveHead()) |request| {
-            var req = request;
+            var req = request; // request is a const
 
             // We only need the method (GET, POST, ...) and the path
             std.debug.print("method: {}\n", .{req.head.method});
@@ -44,7 +44,7 @@ pub fn main() !void {
                 .status = std.http.Status.not_implemented,
             });
         } else |err| {
-            std.debug.print("Failed to read header: {}\n", .{err});
+            std.debug.print("Failed to receive the header: {}\n", .{err});
         }
     } else |err| {
         std.debug.print("failed to accept connection: {}\n", .{err});
