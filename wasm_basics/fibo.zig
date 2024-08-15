@@ -24,7 +24,7 @@ pub export fn fibo(n: i32) i32 {
     if (n == 1)
         return 1;
 
-    var f_n: i32 = undefined; // Will be compute in the loop
+    var f_n: i32 = undefined; // Will be computed in the loop
     var f_n1: i32 = 1; // F(n-1) is F1
     var f_n2: i32 = 0; // F(n-2) is F0
 
