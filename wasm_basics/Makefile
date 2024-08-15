@@ -12,9 +12,9 @@ fibo.wasm: fibo.zig
 		-O ReleaseFast \
 		fibo.zig
 
-run: app_fibo
+run: all
 	./app_fibo
-	node ./web_fibo.js
+	node ./node_fibo.js
 
 clean:
 	rm -f *.o app_fibo fibo.wasm
