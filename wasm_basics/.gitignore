@@ -1,3 +1,5 @@
 app
 *.o
 fibo.wasm
+web_server
+app_fibo
