@@ -2,7 +2,7 @@
 
 all: web_server app_fibo fibo.wasm
 
-web_server: web_server.zig
+web_server: web_server.zig web_pages/
 	zig build-exe web_server.zig
 
 app_fibo: app_fibo.zig

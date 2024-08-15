@@ -1,6 +1,24 @@
 const std = @import("std");
 const html_errors = @import("web_pages/html_errors.zig");
 
+const Paths = enum {
+    game,
+    data,
+    unknown,
+
+    pub fn stringtoPaths(s: []const u8) Paths {
+        if (std.mem.eql(u8, s, "/game")) {
+            return .game;
+        }
+
+        if (std.mem.eql(u8, s, "/data")) {
+            return .data;
+        }
+
+        return .unknown;
+    }
+};
+
 pub fn main() !void {
     const listen_addr = try std.net.Address.parseIp4("0.0.0.0", 8000);
     var listener = try listen_addr.listen(.{
@@ -28,6 +46,13 @@ pub fn main() !void {
             std.debug.print("method: {}\n", .{req.head.method});
             std.debug.print("path: {s}\n", .{req.head.target});
 
+            if (req.head.method == std.http.Method.GET) {
+                switch (Paths.stringtoPaths(req.head.target)) {
+                    .game => std.debug.print("GAME", .{}),
+                    .data => std.debug.print("DATA", .{}),
+                    .unknown => std.debug.print("OTHER", .{}),
+                }
+            }
             // Answer not implemented for now
             try req.respond(html_errors.not_implemented, .{
                 .status = std.http.Status.not_implemented,
