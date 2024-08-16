@@ -84,8 +84,20 @@ fn fibo_respond(req: *std.http.Server.Request) !void {
 
 // Request for downloading a file
 fn fibo_wasm_respond(req: *std.http.Server.Request) !void {
-    try req.respond(wfibo.index, .{
-        .status = .not_implemented,
+    const allocator = std.heap.page_allocator;
+
+    var file = try std.fs.cwd().openFile("./fibo.wasm", .{});
+    defer file.close();
+
+    const file_size = try file.getEndPos();
+    const file_contents = try allocator.alloc(u8, file_size);
+    defer allocator.free(file_contents);
+
+    const carlu = try file.readAll(file_contents);
+    std.debug.print("read {} bytes for fibo.wasm\n", .{carlu});
+
+    try req.respond(file_contents, .{
+        .status = .ok,
         .extra_headers = &.{
             .{ .name = "Content-Type", .value = "application/wasm" },
         },

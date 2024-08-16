@@ -17,8 +17,14 @@
         - `app_fibo.zig`: a standalone application in Zig
         - `node_fibo.js`: that loads the `fibo.wasm` file generated from the same `fibo.zig` code.
 
+# Test it
+
 - You can test is by running `make all`
     - then run the standalone app: `./app_fibo`
     - or run the web app `node node_fibo.js`
 
-- WIP: implement an HTTP server to run our `fibo.wasm` file...
+**OR**
+
+- **_WIP_**: implement an HTTP server to run our `fibo.wasm` file...
+- As said it is a WIP but you can already do: `make run`
+    - and open `http://localhost:8000/fibo`
