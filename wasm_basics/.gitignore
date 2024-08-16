@@ -1,5 +1,5 @@
 app
 *.o
 fibo.wasm
-web_server
+web_fibo
 app_fibo

@@ -21,3 +21,4 @@
     - then run the standalone app: `./app_fibo`
     - or run the web app `node node_fibo.js`
 
+- WIP: implement an HTTP server to run our `fibo.wasm` file...
