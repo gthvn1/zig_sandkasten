@@ -1,19 +1,34 @@
 const std = @import("std");
-const not_implemented = @import("web_pages/not_implemented.zig");
-const ze_game = @import("web_pages/ze_game.zig");
+const whelp = @import("web_pages/help.zig");
+const wgame = @import("web_pages/game.zig");
+const wfibo = @import("web_pages/fibo.zig");
 
 const Paths = enum {
-    game,
+    root,
     data,
+    fibo,
+    fibo_wasm,
+    help,
+    game,
     unknown,
 
     pub fn stringtoPaths(s: []const u8) Paths {
-        if (std.mem.eql(u8, s, "/game")) {
-            return .game;
-        }
+        const Lookup = struct {
+            path: []const u8,
+            path_e: Paths,
+        };
 
-        if (std.mem.eql(u8, s, "/data")) {
-            return .data;
+        const lookup = [_]Lookup{
+            .{ .path = "/", .path_e = .root },
+            .{ .path = "/data", .path_e = .data },
+            .{ .path = "/fibo", .path_e = .fibo },
+            .{ .path = "/fibo.wasm", .path_e = .fibo_wasm },
+            .{ .path = "/game", .path_e = .game },
+            .{ .path = "/help", .path_e = .help },
+        };
+
+        inline for (lookup) |e| {
+            if (std.mem.eql(u8, s, e.path)) return e.path_e;
         }
 
         return .unknown;
@@ -21,7 +36,7 @@ const Paths = enum {
 };
 
 fn game_respond(req: *std.http.Server.Request) !void {
-    try req.respond(ze_game.index, .{
+    try req.respond(wgame.index, .{
         .status = .ok,
         .extra_headers = &.{
             .{ .name = "Content-Type", .value = "text/html" },
@@ -57,10 +72,40 @@ fn data_respond(req: *std.http.Server.Request) !void {
     });
 }
 
+fn fibo_respond(req: *std.http.Server.Request) !void {
+    // Answer not implemented and print help
+    try req.respond(wfibo.index, .{
+        .status = .ok,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "text/html" },
+        },
+    });
+}
+
+// Request for downloading a file
+fn fibo_wasm_respond(req: *std.http.Server.Request) !void {
+    try req.respond(wfibo.index, .{
+        .status = .not_implemented,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "application/wasm" },
+        },
+    });
+}
+
+fn unknown_respond(req: *std.http.Server.Request) !void {
+    // Answer not implemented and print help
+    try req.respond(whelp.index, .{
+        .status = .not_implemented,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "text/html" },
+        },
+    });
+}
+
 fn help_respond(req: *std.http.Server.Request) !void {
     // Answer not implemented for now
-    try req.respond(not_implemented.index, .{
-        .status = .not_implemented,
+    try req.respond(whelp.index, .{
+        .status = .ok,
         .extra_headers = &.{
             .{ .name = "Content-Type", .value = "text/html" },
         },
@@ -91,14 +136,19 @@ fn start_server() !void {
             var req = request; // request is a const
 
             if (req.head.method == std.http.Method.GET) {
+                std.debug.print("Trying to serve {s}\n", .{req.head.target});
                 try switch (Paths.stringtoPaths(req.head.target)) {
-                    .game => game_respond(&req),
                     .data => data_respond(&req),
-                    .unknown => help_respond(&req),
+                    .fibo => fibo_respond(&req),
+                    .fibo_wasm => fibo_wasm_respond(&req),
+                    .game => game_respond(&req),
+                    .help => help_respond(&req),
+                    .root => help_respond(&req),
+                    .unknown => unknown_respond(&req),
                 };
             } else {
                 // Only GET is supported
-                try help_respond(&req);
+                try unknown_respond(&req);
             }
         } else |err| {
             std.debug.print("Failed to receive the header: {}\n", .{err});
