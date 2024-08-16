@@ -64,6 +64,8 @@ fn data_respond(req: *std.http.Server.Request) !void {
         std.json.stringify("Server error", .{}, string.writer()) catch unreachable;
     };
 
+    // NOTE: we can maybe use "resp = respondStreaming(...)" and use the buf for
+    // stringify. So resp.writer()... instead of string.writer()
     try req.respond(string.items, .{
         .status = .ok,
         .extra_headers = &.{
