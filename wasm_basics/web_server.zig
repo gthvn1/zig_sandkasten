@@ -1,5 +1,7 @@
 const std = @import("std");
-const html_errors = @import("web_pages/html_errors.zig");
+const not_implemented = @import("web_pages/not_implemented.zig");
+const ze_game = @import("web_pages/ze_game.zig");
+const ze_data = @import("web_pages/ze_data.zig");
 
 const Paths = enum {
     game,
@@ -19,7 +21,37 @@ const Paths = enum {
     }
 };
 
-pub fn main() !void {
+fn game_respond(req: *std.http.Server.Request) !void {
+    // Answer not implemented for now
+    try req.respond(ze_game.index, .{
+        .status = .ok,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "text/html" },
+        },
+    });
+}
+
+fn data_respond(req: *std.http.Server.Request) !void {
+    // Answer not implemented for now
+    try req.respond(ze_data.index, .{
+        .status = .ok,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "text/html" },
+        },
+    });
+}
+
+fn unknown_respond(req: *std.http.Server.Request) !void {
+    // Answer not implemented for now
+    try req.respond(not_implemented.index, .{
+        .status = .not_implemented,
+        .extra_headers = &.{
+            .{ .name = "Content-Type", .value = "text/html" },
+        },
+    });
+}
+
+fn start_server() !void {
     const listen_addr = try std.net.Address.parseIp4("0.0.0.0", 8000);
     var listener = try listen_addr.listen(.{
         .reuse_port = true,
@@ -42,25 +74,24 @@ pub fn main() !void {
         if (server.receiveHead()) |request| {
             var req = request; // request is a const
 
-            // We only need the method (GET, POST, ...) and the path
-            std.debug.print("method: {}\n", .{req.head.method});
-            std.debug.print("path: {s}\n", .{req.head.target});
-
             if (req.head.method == std.http.Method.GET) {
-                switch (Paths.stringtoPaths(req.head.target)) {
-                    .game => std.debug.print("GAME", .{}),
-                    .data => std.debug.print("DATA", .{}),
-                    .unknown => std.debug.print("OTHER", .{}),
-                }
+                try switch (Paths.stringtoPaths(req.head.target)) {
+                    .game => game_respond(&req),
+                    .data => data_respond(&req),
+                    .unknown => unknown_respond(&req),
+                };
+            } else {
+                // Only GET is supported
+                try unknown_respond(&req);
             }
-            // Answer not implemented for now
-            try req.respond(html_errors.not_implemented, .{
-                .status = std.http.Status.not_implemented,
-            });
         } else |err| {
             std.debug.print("Failed to receive the header: {}\n", .{err});
         }
     } else |err| {
         std.debug.print("failed to accept connection: {}\n", .{err});
     }
+}
+
+pub fn main() !void {
+    try start_server();
 }

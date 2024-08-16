@@ -1,4 +1,4 @@
-pub const not_implemented =
+pub const index =
     \\<!DOCTYPE html>
     \\<html lang="en">
     \\<head>
