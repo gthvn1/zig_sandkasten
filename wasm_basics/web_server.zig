@@ -1,7 +1,6 @@
 const std = @import("std");
 const not_implemented = @import("web_pages/not_implemented.zig");
 const ze_game = @import("web_pages/ze_game.zig");
-const ze_data = @import("web_pages/ze_data.zig");
 
 const Paths = enum {
     game,
@@ -22,7 +21,6 @@ const Paths = enum {
 };
 
 fn game_respond(req: *std.http.Server.Request) !void {
-    // Answer not implemented for now
     try req.respond(ze_game.index, .{
         .status = .ok,
         .extra_headers = &.{
@@ -32,16 +30,34 @@ fn game_respond(req: *std.http.Server.Request) !void {
 }
 
 fn data_respond(req: *std.http.Server.Request) !void {
-    // Answer not implemented for now
-    try req.respond(ze_data.index, .{
+    const Game = struct {
+        weight: u32,
+        height: u32,
+    };
+
+    const game = Game{ .weight = 800, .height = 600 };
+    var buf: [128]u8 = undefined;
+    var fba = std.heap.FixedBufferAllocator.init(&buf);
+    var string = std.ArrayList(u8).init(fba.allocator());
+    defer string.deinit();
+
+    std.json.stringify(game, .{}, string.writer()) catch |err| {
+        // 128 bytes should be ok to hold the structure. If not we just need to
+        // reset the string and report an error instead of crashing the server.
+        std.debug.print("ERROR: data_respond: {}\n", .{err});
+        string.resize(0) catch unreachable;
+        std.json.stringify("Server error", .{}, string.writer()) catch unreachable;
+    };
+
+    try req.respond(string.items, .{
         .status = .ok,
         .extra_headers = &.{
-            .{ .name = "Content-Type", .value = "text/html" },
+            .{ .name = "Content-Type", .value = "application/json" },
         },
     });
 }
 
-fn unknown_respond(req: *std.http.Server.Request) !void {
+fn help_respond(req: *std.http.Server.Request) !void {
     // Answer not implemented for now
     try req.respond(not_implemented.index, .{
         .status = .not_implemented,
@@ -78,11 +94,11 @@ fn start_server() !void {
                 try switch (Paths.stringtoPaths(req.head.target)) {
                     .game => game_respond(&req),
                     .data => data_respond(&req),
-                    .unknown => unknown_respond(&req),
+                    .unknown => help_respond(&req),
                 };
             } else {
                 // Only GET is supported
-                try unknown_respond(&req);
+                try help_respond(&req);
             }
         } else |err| {
             std.debug.print("Failed to receive the header: {}\n", .{err});
