@@ -19,12 +19,12 @@
 
 # Test it
 
-- You can test is by running `make all`
-    - then run the standalone app: `./app_fibo`
-    - or run the web app `node node_fibo.js`
+## Build
+- build with: `zig build`
 
-**OR**
-
-- **_WIP_**: implement an HTTP server to run our `fibo.wasm` file...
-- As said it is a WIP but you can already do: `make run`
-    - and open `http://localhost:8000/fibo`
+## Run
+- *TODO*: add a run step in `build.zig`.
+- To run the server: `(cd ./zig-out/bin && ./web_fibo )`
+    - and open http://localhost:8000/fibo
+- To run the standalone application: `(cd ./zig-out/bin && ./app_fibo )`
+- You can also run the web app without starting the server: `node ./node_fibo.js`

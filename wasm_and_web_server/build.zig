@@ -8,8 +8,8 @@ const Exe = struct {
 pub fn build(b: *std.Build) void {
     const t = b.standardTargetOptions(.{});
     const executables = [_]Exe{
-        .{ .name = "app_fibo", .source = "app_fibo.zig" },
-        .{ .name = "web_fibo", .source = "web_fibo.zig" },
+        .{ .name = "app_fibo", .source = "src/app_fibo.zig" },
+        .{ .name = "web_fibo", .source = "src/web_fibo.zig" },
     };
 
     inline for (executables) |e| {
@@ -26,7 +26,7 @@ pub fn build(b: *std.Build) void {
     // https://github.com/daneelsan/minimal-zig-wasm-canvas/blob/master/build.zig
     const wasm = b.addExecutable(.{
         .name = "fibo",
-        .root_source_file = b.path("./fibo.zig"),
+        .root_source_file = b.path("./src/fibo.zig"),
         .target = b.resolveTargetQuery(.{
             .cpu_arch = .wasm32,
             .os_tag = .freestanding,
