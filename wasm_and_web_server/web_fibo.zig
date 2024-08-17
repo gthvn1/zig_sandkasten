@@ -4,35 +4,12 @@ const wgame = @import("web_pages/game.zig");
 const wfibo = @import("web_pages/fibo.zig");
 
 const Paths = enum {
-    root,
-    data,
-    fibo,
-    fibo_wasm,
-    help,
-    game,
-    unknown,
-
-    pub fn stringtoPaths(s: []const u8) Paths {
-        const Lookup = struct {
-            path: []const u8,
-            path_e: Paths,
-        };
-
-        const lookup = [_]Lookup{
-            .{ .path = "/", .path_e = .root },
-            .{ .path = "/data", .path_e = .data },
-            .{ .path = "/fibo", .path_e = .fibo },
-            .{ .path = "/fibo.wasm", .path_e = .fibo_wasm },
-            .{ .path = "/game", .path_e = .game },
-            .{ .path = "/help", .path_e = .help },
-        };
-
-        inline for (lookup) |e| {
-            if (std.mem.eql(u8, s, e.path)) return e.path_e;
-        }
-
-        return .unknown;
-    }
+    @"/root",
+    @"/data",
+    @"/fibo",
+    @"/fibo.wasm",
+    @"/help",
+    @"/game",
 };
 
 fn game_respond(req: *std.http.Server.Request) !void {
@@ -139,7 +116,7 @@ fn start_server() !void {
 
         // Init the server to respond to the connection.
         // We only expect GET with path.
-        const max_req_len = 512;
+        const max_req_len = 1024;
         var buffer = [_]u8{0} ** max_req_len;
         var server = std.http.Server.init(conn, buffer[0..]);
 
@@ -149,19 +126,23 @@ fn start_server() !void {
         if (server.receiveHead()) |request| {
             var req = request; // request is a const
 
-            if (req.head.method == std.http.Method.GET) {
-                std.debug.print("Trying to serve {s}\n", .{req.head.target});
-                try switch (Paths.stringtoPaths(req.head.target)) {
-                    .data => data_respond(&req),
-                    .fibo => fibo_respond(&req),
-                    .fibo_wasm => fibo_wasm_respond(&req),
-                    .game => game_respond(&req),
-                    .help => help_respond(&req),
-                    .root => help_respond(&req),
-                    .unknown => unknown_respond(&req),
+            if (req.head.method != std.http.Method.GET) {
+                // Only GET is supported
+                try unknown_respond(&req);
+                continue;
+            }
+
+            std.debug.print("Trying to serve {s}\n", .{req.head.target});
+            if (std.meta.stringToEnum(Paths, req.head.target)) |path| {
+                try switch (path) {
+                    .@"/data" => data_respond(&req),
+                    .@"/fibo" => fibo_respond(&req),
+                    .@"/fibo.wasm" => fibo_wasm_respond(&req),
+                    .@"/game" => game_respond(&req),
+                    .@"/help" => help_respond(&req),
+                    .@"/root" => help_respond(&req),
                 };
             } else {
-                // Only GET is supported
                 try unknown_respond(&req);
             }
         } else |err| {
