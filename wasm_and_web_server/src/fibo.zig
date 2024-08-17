@@ -12,11 +12,13 @@ const std = @import("std");
 extern fn loggme(msg: [*:0]const u8) void;
 
 pub export fn fibo(n: i32) i32 {
-    const LOGBUFSIZE = 128;
-    var logbuf = [_]u8{0} ** LOGBUFSIZE;
+    var logbuf: [1024]u8 = undefined;
 
-    const msg = std.fmt.bufPrintZ(logbuf[0..LOGBUFSIZE], "FIBO: Compute fibo for {}\n", .{n}) catch unreachable;
-    loggme(msg);
+    if (std.fmt.bufPrintZ(&logbuf, "Computed fibo({})", .{n})) |log| {
+        loggme(log);
+    } else |_| {
+        loggme("Failed to log");
+    }
 
     if (n == 0)
         return 0;
