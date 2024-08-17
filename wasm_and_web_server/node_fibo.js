@@ -1,5 +1,6 @@
 const fs = require('fs');
-const wasmModule = fs.readFileSync('./fibo.wasm');
+
+const wasmModule = fs.readFileSync('./zig-out/bin/fibo.wasm');
 var memory; // We need access to memory to read data like logs
 
 function strlen(ptr) {
@@ -28,7 +29,7 @@ const imports = {
 };
 
 WebAssembly
-  .instantiate(wasmModule, {env: imports})
+  .instantiate(wasmModule, { env: imports })
   .then((obj) => {
     memory = obj.instance.exports["memory"];
     for (let i = 0; i < 10; i++) {
