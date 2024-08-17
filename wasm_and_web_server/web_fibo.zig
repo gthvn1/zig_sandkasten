@@ -4,7 +4,7 @@ const wgame = @import("web_pages/game.zig");
 const wfibo = @import("web_pages/fibo.zig");
 
 const Paths = enum {
-    @"/root",
+    @"/",
     @"/data",
     @"/fibo",
     @"/fibo.wasm",
@@ -140,7 +140,7 @@ fn start_server() !void {
                     .@"/fibo.wasm" => fibo_wasm_respond(&req),
                     .@"/game" => game_respond(&req),
                     .@"/help" => help_respond(&req),
-                    .@"/root" => help_respond(&req),
+                    .@"/" => help_respond(&req),
                 };
             } else {
                 try unknown_respond(&req);
