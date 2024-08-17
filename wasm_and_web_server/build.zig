@@ -26,7 +26,7 @@ pub fn build(b: *std.Build) void {
     // https://github.com/daneelsan/minimal-zig-wasm-canvas/blob/master/build.zig
     const wasm = b.addExecutable(.{
         .name = "fibo",
-        .root_source_file = b.path("./src/fibo.zig"),
+        .root_source_file = b.path("src/fibo.zig"),
         .target = b.resolveTargetQuery(.{
             .cpu_arch = .wasm32,
             .os_tag = .freestanding,
