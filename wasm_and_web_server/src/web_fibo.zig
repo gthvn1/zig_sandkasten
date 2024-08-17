@@ -65,22 +65,32 @@ fn fibo_respond(req: *std.http.Server.Request) !void {
 fn fibo_wasm_respond(req: *std.http.Server.Request) !void {
     const allocator = std.heap.page_allocator;
 
-    var file = try std.fs.cwd().openFile("./fibo.wasm", .{});
-    defer file.close();
+    if (std.fs.cwd().openFile("./fibo.wasm", .{})) |file| {
+        defer file.close();
 
-    const file_size = try file.getEndPos();
-    const file_contents = try allocator.alloc(u8, file_size);
-    defer allocator.free(file_contents);
+        const file_size = try file.getEndPos();
+        const file_contents = try allocator.alloc(u8, file_size);
+        defer allocator.free(file_contents);
 
-    const carlu = try file.readAll(file_contents);
-    std.debug.print("read {} bytes for fibo.wasm\n", .{carlu});
+        const carlu = try file.readAll(file_contents);
+        std.debug.print("read {} bytes for fibo.wasm\n", .{carlu});
 
-    try req.respond(file_contents, .{
-        .status = .ok,
-        .extra_headers = &.{
-            .{ .name = "Content-Type", .value = "application/wasm" },
-        },
-    });
+        try req.respond(file_contents, .{
+            .status = .ok,
+            .extra_headers = &.{
+                .{ .name = "Content-Type", .value = "application/wasm" },
+            },
+        });
+    } else |err| {
+        std.debug.print("Failed to load fibo.wasm: {}\n", .{err});
+
+        try req.respond("", .{
+            .status = .internal_server_error,
+            .extra_headers = &.{
+                .{ .name = "Content-Type", .value = "application/wasm" },
+            },
+        });
+    }
 }
 
 fn unknown_respond(req: *std.http.Server.Request) !void {
