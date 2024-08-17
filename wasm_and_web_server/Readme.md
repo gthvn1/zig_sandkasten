@@ -19,12 +19,8 @@
 
 # Test it
 
-## Build
-- build with: `zig build`
-
-## Run
-- *TODO*: add a run step in `build.zig`.
-- To run the server: `(cd ./zig-out/bin && ./web_fibo )`
+*TODO*: add a run step in `build.zig`. Until we add it you have three ways to test fibo:
+- run the server: `(zig build && cd ./zig-out/bin && ./web_fibo )`
     - and open http://localhost:8000/fibo
-- To run the standalone application: `(cd ./zig-out/bin && ./app_fibo )`
-- You can also run the web app without starting the server: `node ./node_fibo.js`
+- run the standalone application: `(zig build && cd ./zig-out/bin && ./app_fibo )`
+- run the web app without starting the server: `zig build && node ./node_fibo.js`
