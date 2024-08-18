@@ -9,15 +9,16 @@ const std = @import("std");
 
 // we want to be able to use a log function provided by another object file.
 // As we don't want to allocate buffer we will used fixed sized buffer.
-extern fn loggme(msg: [*:0]const u8) void;
+extern fn loggme(sptr: [*]const u8, slen: usize) void;
 
 pub export fn fibo(n: i32) i32 {
     var logbuf: [1024]u8 = undefined;
 
-    if (std.fmt.bufPrintZ(&logbuf, "Computed fibo({})", .{n})) |log| {
-        loggme(log);
+    if (std.fmt.bufPrint(&logbuf, "Computed fibo({})", .{n})) |log| {
+        loggme(log.ptr, log.len);
     } else |_| {
-        loggme("Failed to log");
+        const err: []const u8 = "Failed to print log";
+        loggme(err.ptr, err.len);
     }
 
     if (n == 0)
