@@ -9,3 +9,6 @@
             - maybe using our own server
         - how to export/import functions,
         - ...
+- [Chip8 in the browser](https://github.com/gthvn1/zig_sandkasten/blob/master/chip8_in_the_browser/)
+    - Run a chip8 emulator in the browser
+    - Implement the emulator in Zig and cross compile it...

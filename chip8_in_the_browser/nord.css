@@ -1,0 +1,58 @@
+/* Nord UI: https://nordui.netlify.app/docs/core/colors */
+:root {
+  --nord0 : #2e3440;
+  --nord1 : #3b4252;
+  --nord2 : #434c5e;
+  --nord3 : #4c566a;
+  --nord4 : #d8dee9;
+  --nord5 : #e5e9f0;
+  --nord6 : #eceff4;
+  --nord7 : #8fbcbb;
+  --nord8 : #88c0d0;
+  --nord9 : #81a1c1;
+  --nord10: #5e81ac;
+  --nord11: #bf616a;
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
+}
+
+body {
+  background: var(--nord0);
+  color: var(--nord5);
+  margin: 10px 50px 20px;
+  font: Dekko, Aclonica, Abel, Verdana, sans-serif
+}
+
+a:link    { color: var(--nord7) }
+a:visited { color: var(--nord8) }
+a:hover   { color: var(--nord9) }
+a:active  { color: var(--nord10) }
+
+h1 { color: var(--nord11); text-align: center; font-style: italic }
+h2 { color: var(--nord12) }
+h3 { color: var(--nord13) }
+
+button {
+  background-color: var(--nord10);
+  color: var(--nord6);
+  padding: 15px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.box    { color: var(--nord15) }
+.result { color: var(--nord4); font-weight: bolder }
+.debug  { color: var(--nord6); font-style: italic }
+
+/* Split the demo into two parts */
+.container { display: flex; gap: 1em }
+#split {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--nord11);
+  background-color: var(--nord2);
+  flex: 1
+}
